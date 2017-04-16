@@ -30,6 +30,10 @@
 #include "KeyFrameDatabase.h"
 
 #include <mutex>
+#include <vector>
+#include <iomanip> // setprecision
+#include <sstream> // stringstream
+#include <string>
 
 
 namespace ORB_SLAM2
@@ -44,7 +48,7 @@ class KeyFrame
 {
 public:
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);
-
+    
     // Pose functions
     void SetPose(const cv::Mat &Tcw);
     cv::Mat GetPose();
@@ -115,11 +119,13 @@ public:
     static bool lId(KeyFrame* pKF1, KeyFrame* pKF2){
         return pKF1->mnId<pKF2->mnId;
     }
-
+    
+    void save_images();
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).
 public:
-
+    //image list
+    vector<cv::Mat> images;
     static long unsigned int nNextId;
     long unsigned int mnId;
     const long unsigned int mnFrameId;

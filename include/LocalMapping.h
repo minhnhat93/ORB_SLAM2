@@ -26,6 +26,7 @@
 #include "LoopClosing.h"
 #include "Tracking.h"
 #include "KeyFrameDatabase.h"
+#include "System.h"
 
 #include <mutex>
 
@@ -121,6 +122,7 @@ protected:
 
     bool mbAcceptKeyFrames;
     std::mutex mMutexAccept;
+
 };
 
 } //namespace ORB_SLAM

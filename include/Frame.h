@@ -31,6 +31,7 @@
 #include "ORBextractor.h"
 
 #include <opencv2/opencv.hpp>
+#include <vector>
 
 namespace ORB_SLAM2
 {
@@ -99,6 +100,9 @@ public:
     cv::Mat UnprojectStereo(const int &i);
 
 public:
+    // Store the images used for Extra method
+    vector<cv::Mat> images;
+    
     // Vocabulary used for relocalization.
     ORBVocabulary* mpORBvocabulary;
 

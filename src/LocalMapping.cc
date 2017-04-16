@@ -32,6 +32,14 @@ LocalMapping::LocalMapping(Map *pMap, const float bMonocular):
     mbMonocular(bMonocular), mbResetRequested(false), mbFinishRequested(false), mbFinished(true), mpMap(pMap),
     mbAbortBA(false), mbStopped(false), mbStopRequested(false), mbNotStop(false), mbAcceptKeyFrames(true)
 {
+//   float* arr;
+//   arr = new float[10000];
+//   memset(arr, 0, sizeof(float) * 10000);
+//   cv::Mat Image;
+//   Image = cv::Mat(cv::Size(100, 100), CV_32FC1, arr);
+//   std::cout << "Displaying Image" << std::endl;
+//   cv::namedWindow("Occupancy GridMap", cv::WINDOW_AUTOSIZE);
+//   cv::imshow("Occupancy GridMap", Image);
 }
 
 void LocalMapping::SetLoopCloser(LoopClosing* pLoopCloser)
@@ -85,6 +93,11 @@ void LocalMapping::Run()
             }
 
             mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
+            
+            // Save KeyFrame images
+            mpCurrentKeyFrame->save_images();
+            // Save Trajectory
+            System::SaveKeyFrameTrajectory(mpMap, "KeyFrameTrajectory.txt", "MapPoints.txt", false);
         }
         else if(Stop())
         {

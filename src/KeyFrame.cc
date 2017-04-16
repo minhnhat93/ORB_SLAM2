@@ -41,7 +41,8 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
     mvInvLevelSigma2(F.mvInvLevelSigma2), mnMinX(F.mnMinX), mnMinY(F.mnMinY), mnMaxX(F.mnMaxX),
     mnMaxY(F.mnMaxY), mK(F.mK), mvpMapPoints(F.mvpMapPoints), mpKeyFrameDB(pKFDB),
     mpORBvocabulary(F.mpORBvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
-    mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb/2), mpMap(pMap)
+    mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb/2), mpMap(pMap),
+    images(F.images)
 {
     mnId=nNextId++;
 
@@ -660,6 +661,20 @@ float KeyFrame::ComputeSceneMedianDepth(const int q)
     sort(vDepths.begin(),vDepths.end());
 
     return vDepths[(vDepths.size()-1)/q];
+}
+
+void KeyFrame::save_images()
+{
+    std::stringstream stream;
+    stream << setprecision(6) << mTimeStamp;
+    std::string mTimeStampStr = stream.str();
+    std::string fn;
+    for (int i=0; i<images.size(); ++i)
+    {
+        fn = "KeyFrames/" + mTimeStampStr + "_" + std::to_string(i) + ".ppm";
+        std::cout << "Saving to " << fn << std::endl;
+        cv::imwrite(fn, images[i]);
+    }
 }
 
 } //namespace ORB_SLAM
