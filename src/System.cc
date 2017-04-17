@@ -536,6 +536,7 @@ void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map) {
     }
     
     f << "END 0 0 0 0 0 0 0" << std::endl;
+    fpoints << "DONE 0 0 0 0" <<std::endl;
     f.close();
     fpoints.close();
     //std::cout << std::endl << "trajectory saved!" << std::endl;

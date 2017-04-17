@@ -122,7 +122,8 @@ protected:
 
     bool mbAcceptKeyFrames;
     std::mutex mMutexAccept;
-
+    
+    int frameProcessedCount;
 };
 
 } //namespace ORB_SLAM
