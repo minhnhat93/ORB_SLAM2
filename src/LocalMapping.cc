@@ -22,6 +22,7 @@
 #include "LoopClosing.h"
 #include "ORBmatcher.h"
 #include "Optimizer.h"
+#include <thread>
 
 #include<mutex>
 
@@ -97,6 +98,7 @@ void LocalMapping::Run()
             // Save KeyFrame images
             mpCurrentKeyFrame->save_images();
             // Save Trajectory
+            //System::SaveKeyFrameTrajectory(mpMap);
             System::SaveKeyFramePartially(mpMap);
             System::SaveMapPointsOfKeyFrame(mpCurrentKeyFrame);
         }
