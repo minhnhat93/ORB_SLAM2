@@ -666,14 +666,15 @@ float KeyFrame::ComputeSceneMedianDepth(const int q)
 void KeyFrame::save_images()
 {
     std::stringstream stream;
-    stream << setprecision(6) << mTimeStamp;
+    stream << std::fixed << std::setprecision(6) << mTimeStamp;
     std::string mTimeStampStr = stream.str();
     std::string fn;
     for (int i=0; i<images.size(); ++i)
     {
         fn = "KeyFrames/" + mTimeStampStr + "_" + std::to_string(i) + ".ppm";
-        std::cout << "Saving to " << fn << std::endl;
+        //std::cout << "Saving to " << fn << std::endl;
         cv::imwrite(fn, images[i]);
+        system(("exec mogrify -format ppm " + fn).c_str());
     }
 }
 

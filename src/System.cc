@@ -25,6 +25,7 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include <sstream>
 
 namespace ORB_SLAM2
 {
@@ -320,7 +321,7 @@ void System::Shutdown()
     if(mpViewer)
         pangolin::BindToContext("ORB-SLAM2: Map Viewer");
     std::cout << "Saving End Trajectories" << std::endl;
-    System::SaveKeyFrameTrajectory(mpMap, "KeyFrameTrajectory.txt", "MapPoints.txt", true);
+    System::SaveKeyFrameTrajectory(mpMap);
 }
 
 void System::SaveTrajectoryTUM(const string &filename)
@@ -493,12 +494,14 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
     return mTrackedKeyPointsUn;
 }
 
-void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map, const string &filename, const string &tracksfile, bool isEnd) {
+void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map) {
     //std::cout << std::endl << "Saving keyframe trajectory to " << filename << " ..." << std::endl;
-
+    
+    string filename = "MapPoints/KeyFrames.txt";
+    string tracksfile = "MapPoints/AllMapPoints.txt";
     vector<ORB_SLAM2::KeyFrame*> vpKFs = map->GetAllKeyFrames();
     sort(vpKFs.begin(), vpKFs.end(), ORB_SLAM2::KeyFrame::lId);
-
+    
     std::ofstream f;
     f.open(filename.c_str());
     f << fixed;
@@ -532,13 +535,62 @@ void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map, const string &filename,
         }
     }
     
-    if (isEnd)
-    {
-        f << "END 0 0 0 0 0 0 0" << std::endl;
-    }
+    f << "END 0 0 0 0 0 0 0" << std::endl;
     f.close();
     fpoints.close();
     //std::cout << std::endl << "trajectory saved!" << std::endl;
 }
 
+void System::SaveKeyFramePartially(ORB_SLAM2::Map *map) {
+    //std::cout << std::endl << "Saving keyframe trajectory to " << filename << " ..." << std::endl;
+
+    string filename = "MapPoints/KeyFrames.txt";
+    vector<ORB_SLAM2::KeyFrame*> vpKFs = map->GetAllKeyFrames();
+    sort(vpKFs.begin(), vpKFs.end(), ORB_SLAM2::KeyFrame::lId);
+    
+    std::ofstream f;
+    f.open(filename.c_str());
+    f << fixed;
+
+    for(size_t i = 0; i < vpKFs.size(); i++) {
+        ORB_SLAM2::KeyFrame* pKF = vpKFs[i];
+
+        if(pKF->isBad())
+            continue;
+
+        cv::Mat R = pKF->GetRotation().t();
+        vector<float> q = ORB_SLAM2::Converter::toQuaternion(R);
+        cv::Mat t = pKF->GetCameraCenter();
+        f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+          << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
+    }
+    
+    f << "DONE 0 0 0 0 0 0 0" << std::endl;
+    f.close();
+    //std::cout << std::endl << "trajectory saved!" << std::endl;
+}
+
+void System::SaveMapPointsOfKeyFrame(ORB_SLAM2::KeyFrame *pKF)
+{
+    stringstream stream;
+    stream << fixed << setprecision(6) << pKF->mTimeStamp;
+    string tracksfile = stream.str();
+
+    std::ofstream fpoints;
+    fpoints.open(("MapPoints/" + tracksfile).c_str());
+    fpoints << fixed;
+    for (auto point : pKF->GetMapPoints()) {
+        auto coords = point->GetWorldPos();
+        fpoints << setprecision(6)
+                << pKF->mTimeStamp
+                << " " << point->mnId
+                << setprecision(7)
+                << " " << coords.at<float>(0, 0)
+                << " " << coords.at<float>(1, 0)
+                << " " << coords.at<float>(2, 0)
+                << std::endl;
+     }
+     fpoints << "DONE 0 0 0 0" << std::endl;
+     fpoints.close();
+}
 } //namespace ORB_SLAM

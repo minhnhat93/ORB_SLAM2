@@ -97,7 +97,8 @@ void LocalMapping::Run()
             // Save KeyFrame images
             mpCurrentKeyFrame->save_images();
             // Save Trajectory
-            System::SaveKeyFrameTrajectory(mpMap, "KeyFrameTrajectory.txt", "MapPoints.txt", false);
+            System::SaveKeyFramePartially(mpMap);
+            System::SaveMapPointsOfKeyFrame(mpCurrentKeyFrame);
         }
         else if(Stop())
         {
