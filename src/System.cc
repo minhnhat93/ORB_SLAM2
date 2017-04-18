@@ -516,11 +516,20 @@ void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map) {
         if(pKF->isBad())
             continue;
 
-        cv::Mat R = pKF->GetRotation().t();
-        vector<float> q = ORB_SLAM2::Converter::toQuaternion(R);
+        //cv::Mat R = pKF->GetRotation().t();
+        //vector<float> q = ORB_SLAM2::Converter::toQuaternion(R);
+        cv::Mat R = pKF->GetRotation();
         cv::Mat t = pKF->GetCameraCenter();
+        cv::Mat tr = pKF->GetTranslation();
+        //f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+        //  << " " << tr.at<float>(0) << " " << tr.at<float>(1) << " " << tr.at<float>(2)
+        //  << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
         f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
-          << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
+          << " " << tr.at<float>(0) << " " << tr.at<float>(1) << " " << tr.at<float>(2)
+          << " " << R.at<float>(0, 0) << " " << R.at<float>(0, 1) << " " << R.at<float>(0, 2)
+          << " " << R.at<float>(1, 0) << " " << R.at<float>(1, 1) << " " << R.at<float>(1, 2)
+          << " " << R.at<float>(2, 0) << " " << R.at<float>(2, 1) << " " << R.at<float>(2, 2)
+          << std::endl;
 
         for (auto point : pKF->GetMapPoints()) {
             auto coords = point->GetWorldPos();
@@ -535,7 +544,7 @@ void System::SaveKeyFrameTrajectory(ORB_SLAM2::Map *map) {
         }
     }
     
-    f << "END 0 0 0 0 0 0 0" << std::endl;
+    f << "END 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << std::endl;
     fpoints << "DONE 0 0 0 0" <<std::endl;
     f.close();
     fpoints.close();
@@ -559,14 +568,23 @@ void System::SaveKeyFramePartially(ORB_SLAM2::Map *map) {
         if(pKF->isBad())
             continue;
 
-        cv::Mat R = pKF->GetRotation().t();
-        vector<float> q = ORB_SLAM2::Converter::toQuaternion(R);
+        //cv::Mat R = pKF->GetRotation().t();
+        //vector<float> q = ORB_SLAM2::Converter::toQuaternion(R);
+        cv::Mat R = pKF->GetRotation();
         cv::Mat t = pKF->GetCameraCenter();
+        cv::Mat tr = pKF->GetTranslation();
+        //f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+        //  << " " << tr.at<float>(0) << " " << tr.at<float>(1) << " " << tr.at<float>(2)
+        //  << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
         f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
-          << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << std::endl;
+          << " " << tr.at<float>(0) << " " << tr.at<float>(1) << " " << tr.at<float>(2)
+          << " " << R.at<float>(0, 0) << " " << R.at<float>(0, 1) << " " << R.at<float>(0, 2)
+          << " " << R.at<float>(1, 0) << " " << R.at<float>(1, 1) << " " << R.at<float>(1, 2)
+          << " " << R.at<float>(2, 0) << " " << R.at<float>(2, 1) << " " << R.at<float>(2, 2)
+          << std::endl;
     }
     
-    f << "DONE 0 0 0 0 0 0 0" << std::endl;
+    f << "DONE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" << std::endl;
     f.close();
     //std::cout << std::endl << "trajectory saved!" << std::endl;
 }
